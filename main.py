@@ -83,11 +83,43 @@ class Predictor:
         feat_0_str: str = self.next_feat_idx()
         data[feat_0_str] = data[perc_ret_k].shift(1)  # Previous Min Return
         feat_1_str: str = self.next_feat_idx()
-        data[feat_1_str] = data[perc_ret_k].shift(2)  # Previous Min -1 Return
-        data[self.next_feat_idx()] = (1 + data[feat_0_str])*(1 + data[feat_1_str]) - 1  # Previous two mins Cululative Returns
+        data[self.next_feat_idx()] = data[perc_ret_k].shift(2)  # Previous Min -1 Return
+
+        # data[self.next_feat_idx()] = data[perc_ret_k].shift(3)  # Previous Min -1 Return
+        # data[self.next_feat_idx()] = data[perc_ret_k].shift(4)  # Previous Min -1 Return
+        # data[self.next_feat_idx()] = data[perc_ret_k].shift(5)  # Previous Min -1 Return
+        # data[self.next_feat_idx()] = data[perc_ret_k].shift(6)  # Previous Min -1 Return
+        # data[self.next_feat_idx()] = data[perc_ret_k].shift(7)  # Previous Min -1 Return
+        # data[self.next_feat_idx()] = data[perc_ret_k].shift(8)  # Previous Min -1 Return
+
+        # data[self.next_feat_idx()] = (1 + data[feat_0_str])*(1 + data[feat_1_str]) - 1  # Previous two mins Cululative Returns
+
 
         # data[self.next_feat_idx()] = self.rolling_avg(data, 5)
         # data[self.next_feat_idx()] = self.rolling_avg(data, 14)
+        # data[self.next_feat_idx()] = self.rolling_avg(data, 22)
+        # data[self.next_feat_idx()] = self.rolling_avg(data, 120)
+        # data[self.next_feat_idx()] = self.rolling_avg(data, 250)
+
+        # one_day_volume_k: str = 'OneDayVolume'
+        # data[one_day_volume_k] = data[volume_column_k].rolling(1400).sum().shift(1)
+        # data[self.next_feat_idx()] = data[volume_column_k].shift(1) / data[one_day_volume_k]
+        # data[self.next_feat_idx()] = data[volume_column_k].rolling(2).sum().shift(1) / data[one_day_volume_k]
+        # data[self.next_feat_idx()] = data[volume_column_k].rolling(5).sum().shift(1) / data[one_day_volume_k]
+        # data[self.next_feat_idx()] = data[volume_column_k].rolling(14).sum().shift(1) / data[one_day_volume_k]
+        # data[self.next_feat_idx()] = data[volume_column_k].rolling(22).sum().shift(1) / data[one_day_volume_k]
+        # data[self.next_feat_idx()] = data[volume_column_k].rolling(120).sum().shift(1) / data[one_day_volume_k]
+
+        # data[self.next_feat_idx()] = data[close_column_k].diff()
+        #
+        # vol_feat_idx: str = self.next_feat_idx()
+        # data[vol_feat_idx] = data[volume_column_k].rolling(30).sum()
+        # data[self.next_feat_idx()] = data[close_column_k].rolling(5).sum() / 5 - data[close_column_k]
+        # data[self.next_feat_idx()] = data[close_column_k].rolling(10).sum() / 10 - data[close_column_k]
+        # data[self.next_feat_idx()] = data[close_column_k].rolling(15).sum() / 15 - data[close_column_k]
+        # data[self.next_feat_idx()] = data[close_column_k].rolling(30).sum() / 30 - data[close_column_k]
+        # data[self.next_feat_idx()] = data[close_column_k].rolling(60).sum() / 60 - data[close_column_k]
+        # data[self.next_feat_idx()] = data[volume_column_k] / data[vol_feat_idx]
 
         data = data.dropna()
         return data
@@ -109,23 +141,24 @@ class Predictor:
 
     def regenerate_data(self):
 
-        rb_data: pd.DataFrame = self.load_and_prep_data("\\" + rb_file_name_k)
+        # rb_data: pd.DataFrame = self.load_and_prep_data("\\" + rb_file_name_k)
         cl_data: pd.DataFrame = self.load_and_prep_data("\\" + cl_file_name_k)
-        rb_data.drop(close_column_k, axis='columns', inplace=True)
-        rb_data.drop(volume_column_k, axis='columns', inplace=True)
+        # rb_data.drop(close_column_k, axis='columns', inplace=True)
+        # rb_data.drop(volume_column_k, axis='columns', inplace=True)
 
-        rb_data.drop(perc_ret_k, axis='columns', inplace=True)
-        rb_data.drop('BarCount', axis='columns', inplace=True)
-        rb_data.drop(target_column_k, axis='columns', inplace=True)
+        # rb_data.drop(perc_ret_k, axis='columns', inplace=True)
+        # rb_data.drop('BarCount', axis='columns', inplace=True)
+        # rb_data.drop(target_column_k, axis='columns', inplace=True)
         cl_data.drop(close_column_k, axis='columns', inplace=True)
         cl_data.drop(volume_column_k, axis='columns', inplace=True)
         cl_data.drop('BarCount', axis='columns', inplace=True)
 
-        df_comb = pd.concat([rb_data, cl_data], axis='columns').dropna()
+        cl_data.to_csv(prepped_data_file_name_k, sep='\t')
+        # df_comb = pd.concat([rb_data, cl_data], axis='columns').dropna()
 
         # df_comb = Predictor.create_polynomial_permuatations(df_comb)
 
-        df_comb.to_csv(prepped_data_file_name_k, sep='\t')
+        # df_comb.to_csv(prepped_data_file_name_k, sep='\t')
 
     @staticmethod
     def factors_list(data: pd.DataFrame) -> List[str]:
